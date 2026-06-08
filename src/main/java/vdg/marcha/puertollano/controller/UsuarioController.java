@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import vdg.marcha.puertollano.dto.RegistroRequest;
-import vdg.marcha.puertollano.model.Usuario;
+import vdg.marcha.puertollano.dto.UsuarioResponse;
 import vdg.marcha.puertollano.service.UsuarioService;
 
 @RestController
@@ -16,7 +16,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/register")
-    public Usuario register(
+    public UsuarioResponse register(
             @Valid @RequestBody RegistroRequest request) {
 
         return usuarioService.registrar(request);

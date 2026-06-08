@@ -1,7 +1,5 @@
 package vdg.marcha.puertollano.dto;
 
-
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,4 +20,5 @@ public class UsuarioResponse {
     private String curso;
 
     private String rol;
+
 }

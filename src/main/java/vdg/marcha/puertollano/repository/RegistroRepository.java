@@ -11,5 +11,7 @@ public interface RegistroRepository extends JpaRepository<Registro, Long> {
 
     List<Registro> findByUsuarioId(Long usuarioId);
 
+    List<Registro> findByUsuarioIdOrderByFechaDesc(Long usuarioId);
+
 
 }
