@@ -3,6 +3,8 @@ package vdg.marcha.puertollano.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import vdg.marcha.puertollano.dto.LoginRequest;
+import vdg.marcha.puertollano.dto.LoginResponse;
 import vdg.marcha.puertollano.dto.RegistroRequest;
 import vdg.marcha.puertollano.dto.UsuarioResponse;
 import vdg.marcha.puertollano.model.Rol;
@@ -47,6 +49,32 @@ public class UsuarioService {
                 .email(usuarioGuardado.getEmail())
                 .curso(usuarioGuardado.getCurso())
                 .rol(usuarioGuardado.getRol().name())
+                .build();
+    }
+
+    public LoginResponse login(LoginRequest request) {
+
+        Usuario usuario = usuarioRepository
+                .findByDni(request.getDni())
+                .orElseThrow(() ->
+                        new RuntimeException("DNI o contraseña incorrectos"));
+
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                usuario.getPassword())) {
+
+            throw new RuntimeException(
+                    "DNI o contraseña incorrectos");
+        }
+
+        return LoginResponse.builder()
+                .id(usuario.getId())
+                .dni(usuario.getDni())
+                .nombre(usuario.getNombre())
+                .apellidos(usuario.getApellidos())
+                .email(usuario.getEmail())
+                .curso(usuario.getCurso())
+                .rol(usuario.getRol().name())
                 .build();
     }
 }

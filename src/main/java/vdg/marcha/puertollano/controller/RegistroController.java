@@ -2,6 +2,7 @@ package vdg.marcha.puertollano.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import vdg.marcha.puertollano.dto.EntradaRequest;
 import vdg.marcha.puertollano.dto.RegistroResponse;
 import vdg.marcha.puertollano.service.RegistroService;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/registros")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class RegistroController {
 
     private final RegistroService registroService;
@@ -20,6 +21,20 @@ public class RegistroController {
             @PathVariable Long usuarioId) {
 
         return registroService.obtenerHistorial(usuarioId);
+    }
+
+    @PostMapping("/entrada")
+    public RegistroResponse registrarEntrada(
+            @RequestBody EntradaRequest request) {
+
+        return registroService.registrarEntrada(request);
+    }
+
+    @PutMapping("/salida/{usuarioId}")
+    public RegistroResponse registrarSalida(
+            @PathVariable Long usuarioId) {
+
+        return registroService.registrarSalida(usuarioId);
     }
 
 }

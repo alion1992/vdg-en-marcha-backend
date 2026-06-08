@@ -3,6 +3,8 @@ package vdg.marcha.puertollano.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import vdg.marcha.puertollano.dto.LoginRequest;
+import vdg.marcha.puertollano.dto.LoginResponse;
 import vdg.marcha.puertollano.dto.RegistroRequest;
 import vdg.marcha.puertollano.dto.UsuarioResponse;
 import vdg.marcha.puertollano.service.UsuarioService;
@@ -20,6 +22,13 @@ public class UsuarioController {
             @Valid @RequestBody RegistroRequest request) {
 
         return usuarioService.registrar(request);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(
+            @Valid @RequestBody LoginRequest request) {
+
+        return usuarioService.login(request);
     }
 
 }

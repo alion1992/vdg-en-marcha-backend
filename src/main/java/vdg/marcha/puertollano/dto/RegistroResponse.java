@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @Builder
 public class RegistroResponse {
 
+
     private Long id;
 
     private LocalDate fecha;
@@ -19,4 +20,8 @@ public class RegistroResponse {
     private LocalTime horaSalida;
 
     private Double kilometros;
+
+    private Long usuarioId;
+
+
 }
