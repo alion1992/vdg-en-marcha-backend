@@ -9,6 +9,8 @@ import vdg.marcha.puertollano.dto.RegistroRequest;
 import vdg.marcha.puertollano.dto.UsuarioResponse;
 import vdg.marcha.puertollano.model.Rol;
 import vdg.marcha.puertollano.model.Usuario;
+import vdg.marcha.puertollano.model.UsuarioAutorizado;
+import vdg.marcha.puertollano.repository.UsuarioAutorizadoRepository;
 import vdg.marcha.puertollano.repository.UsuarioRepository;
 
 @Service
@@ -16,6 +18,8 @@ import vdg.marcha.puertollano.repository.UsuarioRepository;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+
+    private final UsuarioAutorizadoRepository usuarioAutorizadoRepository;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -27,6 +31,18 @@ public class UsuarioService {
 
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Ya existe un usuario con ese email");
+        }
+
+        UsuarioAutorizado autorizado =
+                usuarioAutorizadoRepository
+                        .findByDni(request.getDni())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "DNI no autorizado"));
+
+        if (!autorizado.getTieneCuenta() || !autorizado.getActiva()) {
+            throw new RuntimeException(
+                    "Este usuario ya tiene una cuenta vinculada");
         }
 
         Usuario usuario = Usuario.builder()
@@ -65,6 +81,18 @@ public class UsuarioService {
 
             throw new RuntimeException(
                     "DNI o contraseña incorrectos");
+        }
+
+        UsuarioAutorizado autorizado =
+                usuarioAutorizadoRepository
+                        .findByDni(request.getDni())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "DNI no autorizado"));
+
+        if (!autorizado.getActiva()) {
+            throw new RuntimeException(
+                    "La cuenta esta desactivada, contacta con jefatura de estudios para su activación");
         }
 
         return LoginResponse.builder()
