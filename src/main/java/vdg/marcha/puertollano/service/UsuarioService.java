@@ -12,6 +12,7 @@ import vdg.marcha.puertollano.model.Usuario;
 import vdg.marcha.puertollano.model.UsuarioAutorizado;
 import vdg.marcha.puertollano.repository.UsuarioAutorizadoRepository;
 import vdg.marcha.puertollano.repository.UsuarioRepository;
+import vdg.marcha.puertollano.security.JwtService;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,8 @@ public class UsuarioService {
     private final UsuarioAutorizadoRepository usuarioAutorizadoRepository;
 
     private final BCryptPasswordEncoder passwordEncoder;
+
+    private final JwtService jwtService;
 
     public UsuarioResponse registrar(RegistroRequest request) {
 
@@ -93,13 +96,13 @@ public class UsuarioService {
                     "La cuenta esta desactivada, contacta con jefatura de estudios para su activación");
         }
 
+
         return LoginResponse.builder()
                 .id(usuario.getId())
                 .dni(usuario.getDni())
                 .nombre(usuario.getNombre())
-                .apellidos(usuario.getApellidos())
-                .email(usuario.getEmail())
-                .rol(usuario.getRol().name())
+                .token(jwtService.generateToken(
+                        usuario.getDni()))
                 .build();
     }
 }
