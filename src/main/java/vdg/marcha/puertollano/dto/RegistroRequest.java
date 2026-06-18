@@ -24,6 +24,4 @@ public class RegistroRequest {
     @NotBlank
     private String password;
 
-    @NotBlank
-    private String curso;
 }

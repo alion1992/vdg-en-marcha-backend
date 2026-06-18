@@ -18,16 +18,12 @@ public class ShellyService {
         String onUrl =
                 "http://" +
                         shellyProperties.getIp() +
-                        "/relay/" +
-                        shellyProperties.getRelay() +
-                        "?turn=on";
+                        "/rpc/Switch.Set?id=0&on=true";
 
         String offUrl =
                 "http://" +
                         shellyProperties.getIp() +
-                        "/relay/" +
-                        shellyProperties.getRelay() +
-                        "?turn=off";
+                        "/rpc/Switch.Set?id=0&on=false";
 
         restTemplate.getForObject(
                 onUrl,

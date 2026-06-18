@@ -40,7 +40,7 @@ public class UsuarioService {
                                 new RuntimeException(
                                         "DNI no autorizado"));
 
-        if (!autorizado.getTieneCuenta() || !autorizado.getActiva()) {
+        if (autorizado.getTieneCuenta() || autorizado.getActiva()) {
             throw new RuntimeException(
                     "Este usuario ya tiene una cuenta vinculada");
         }
@@ -51,7 +51,6 @@ public class UsuarioService {
                 .apellidos(request.getApellidos())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .curso(request.getCurso())
                 .rol(Rol.ALUMNO)
                 .build();
 
@@ -63,7 +62,6 @@ public class UsuarioService {
                 .nombre(usuarioGuardado.getNombre())
                 .apellidos(usuarioGuardado.getApellidos())
                 .email(usuarioGuardado.getEmail())
-                .curso(usuarioGuardado.getCurso())
                 .rol(usuarioGuardado.getRol().name())
                 .build();
     }
@@ -101,7 +99,6 @@ public class UsuarioService {
                 .nombre(usuario.getNombre())
                 .apellidos(usuario.getApellidos())
                 .email(usuario.getEmail())
-                .curso(usuario.getCurso())
                 .rol(usuario.getRol().name())
                 .build();
     }

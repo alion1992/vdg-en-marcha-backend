@@ -33,9 +33,6 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String curso;
-
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
