@@ -3,25 +3,22 @@ package vdg.marcha.puertollano.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 @Data
 @Builder
 public class RegistroResponse {
 
-
     private Long id;
 
-    private LocalDate fecha;
+    private String dni;
 
-    private LocalTime horaEntrada;
+    private String nombre;
 
-    private LocalTime horaSalida;
+    private String apellidos;
+
+    private String fechaHoraEntrada;
+
+    private String fechaHoraSalida;
 
     private Double kilometros;
-
-    private Long usuarioId;
-
 
 }

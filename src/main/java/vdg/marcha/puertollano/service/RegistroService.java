@@ -1,8 +1,10 @@
 package vdg.marcha.puertollano.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import vdg.marcha.puertollano.dto.EntradaRequest;
+import vdg.marcha.puertollano.dto.RegistroActivoResponse;
 import vdg.marcha.puertollano.dto.RegistroResponse;
 import vdg.marcha.puertollano.model.Registro;
 import vdg.marcha.puertollano.model.Usuario;
@@ -10,6 +12,7 @@ import vdg.marcha.puertollano.repository.RegistroRepository;
 import vdg.marcha.puertollano.repository.UsuarioRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -21,81 +24,127 @@ public class RegistroService {
 
     private final UsuarioRepository usuarioRepository;
 
-    public List<RegistroResponse> obtenerHistorial(Long usuarioId) {
+
+
+    public RegistroActivoResponse obtenerRegistroActivo(
+            Authentication authentication) {
+
+        String dni =
+                authentication.getName();
+
+        Usuario usuario =
+                usuarioRepository
+                        .findByDni(dni)
+                        .orElseThrow();
 
         return registroRepository
-                .findByUsuarioIdOrderByFechaDesc(usuarioId)
-                .stream()
-                .map(registro -> RegistroResponse.builder()
-                        .id(registro.getId())
-                        .fecha(registro.getFecha())
-                        .horaEntrada(registro.getHoraEntrada())
-                        .horaSalida(registro.getHoraSalida())
-                        .kilometros(registro.getKilometros())
-                        .build())
-                .toList();
+                .findFirstByUsuarioIdAndFechaHoraSalidaIsNull(
+                        usuario.getId()
+                )
+                .map(registro ->
+                        RegistroActivoResponse
+                                .builder()
+                                .activo(true)
+                                .fechaHoraEntrada(
+                                        registro
+                                                .getFechaHoraEntrada()
+                                                .toString()
+                                )
+                                .kilometros(
+                                        registro.getKilometros()
+                                )
+                                .build()
+                )
+                .orElse(
+                        RegistroActivoResponse
+                                .builder()
+                                .activo(false)
+                                .build()
+                );
     }
 
     public RegistroResponse registrarEntrada(
-            EntradaRequest request) {
+            EntradaRequest request,
+            Authentication authentication) {
 
+        String dni =
+                authentication.getName();
 
-        if (registroRepository
-                .findFirstByUsuarioIdAndHoraSalidaIsNull(
-                        request.getUsuarioId())
-                .isPresent()) {
+        Usuario usuario =
+                usuarioRepository
+                        .findByDni(dni)
+                        .orElseThrow();
 
-            throw new RuntimeException(
-                    "Ya existe un trayecto abierto");
-        }
+        Registro registro =
+                new Registro();
 
-        Usuario usuario = usuarioRepository
-                .findById(request.getUsuarioId())
-                .orElseThrow();
+        registro.setUsuario(usuario);
 
-        Registro registro = Registro.builder()
-                .fecha(LocalDate.now())
-                .horaEntrada(LocalTime.now())
-                .kilometros(request.getKilometros())
-                .usuario(usuario)
-                .build();
+        registro.setFechaHoraEntrada(
+                LocalDateTime.now()
+        );
 
-        Registro guardado = registroRepository.save(registro);
+        registro.setKilometros(
+                request.getKilometros()
+        );
 
-        return RegistroResponse.builder()
-                .id(guardado.getId())
-                .fecha(guardado.getFecha())
-                .horaEntrada(guardado.getHoraEntrada())
-                .horaSalida(guardado.getHoraSalida())
-                .kilometros(guardado.getKilometros())
-                .usuarioId(guardado.getUsuario().getId())
-                .build();
+        registroRepository.save(registro);
+
+        return convertirAResponse(registro);
     }
 
-    public RegistroResponse registrarSalida(Long usuarioId) {
+    public void registrarSalida(
+            Authentication authentication) {
 
+        String dni =
+                authentication.getName();
 
-        Registro registro = registroRepository
-                .findFirstByUsuarioIdAndHoraSalidaIsNull(usuarioId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "No existe entrada abierta"));
+        Usuario usuario =
+                usuarioRepository
+                        .findByDni(dni)
+                        .orElseThrow();
 
-        registro.setHoraSalida(LocalTime.now());
+        Registro registro =
+                registroRepository
+                        .findFirstByUsuarioIdAndFechaHoraSalidaIsNull(
+                                usuario.getId()
+                        )
+                        .orElseThrow();
 
-        Registro guardado = registroRepository.save(registro);
+        registro.setFechaHoraSalida(
+                LocalDateTime.now()
+        );
 
-        return RegistroResponse.builder()
-                .id(guardado.getId())
-                .fecha(guardado.getFecha())
-                .horaEntrada(guardado.getHoraEntrada())
-                .horaSalida(guardado.getHoraSalida())
-                .kilometros(guardado.getKilometros())
-                .usuarioId(guardado.getUsuario().getId())
-                .build();
-
-
+        registroRepository.save(registro);
     }
 
+    private RegistroResponse convertirAResponse(
+            Registro registro) {
 
+        return RegistroResponse.builder()
+
+                .id(registro.getId())
+
+                .fechaHoraEntrada(
+                        registro.getFechaHoraEntrada()
+                                .toString()
+                )
+
+                .fechaHoraSalida(
+                        registro.getFechaHoraSalida() != null
+                                ? registro.getFechaHoraSalida()
+                                .toString()
+                                : null
+                )
+
+                .kilometros(
+                        registro.getKilometros()
+                )
+
+                .build();
+    }
 }
+
+
+
+

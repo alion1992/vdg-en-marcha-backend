@@ -10,11 +10,8 @@ import java.util.Optional;
 
 public interface RegistroRepository extends JpaRepository<Registro, Long> {
 
-    List<Registro> findByUsuarioId(Long usuarioId);
 
-    List<Registro> findByUsuarioIdOrderByFechaDesc(Long usuarioId);
-
-    Optional<Registro> findFirstByUsuarioIdAndHoraSalidaIsNull(
+    Optional<Registro> findFirstByUsuarioIdAndFechaHoraSalidaIsNull(
             Long usuarioId);
 
 }

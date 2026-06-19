@@ -3,8 +3,7 @@ package vdg.marcha.puertollano.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "registros")
@@ -19,18 +18,19 @@ public class Registro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private LocalDate fecha;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "usuario_id",
+            nullable = false
+    )
+    private Usuario usuario;
 
     @Column(nullable = false)
-    private LocalTime horaEntrada;
+    private LocalDateTime fechaHoraEntrada;
 
-    private LocalTime horaSalida;
+    private LocalDateTime fechaHoraSalida;
 
     @Column(nullable = false)
     private Double kilometros;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
 }

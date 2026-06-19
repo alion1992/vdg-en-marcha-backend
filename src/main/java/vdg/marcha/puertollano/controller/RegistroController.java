@@ -1,8 +1,10 @@
 package vdg.marcha.puertollano.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import vdg.marcha.puertollano.dto.EntradaRequest;
+import vdg.marcha.puertollano.dto.RegistroActivoResponse;
 import vdg.marcha.puertollano.dto.RegistroResponse;
 import vdg.marcha.puertollano.service.RegistroService;
 
@@ -11,30 +13,40 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/registros")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class RegistroController {
 
     private final RegistroService registroService;
 
-    @GetMapping("/usuario/{usuarioId}")
-    public List<RegistroResponse> historial(
-            @PathVariable Long usuarioId) {
+    @GetMapping("/activo")
+    public RegistroActivoResponse obtenerActivo(
+            Authentication authentication) {
 
-        return registroService.obtenerHistorial(usuarioId);
+        return registroService
+                .obtenerRegistroActivo(
+                        authentication
+                );
     }
 
     @PostMapping("/entrada")
     public RegistroResponse registrarEntrada(
-            @RequestBody EntradaRequest request) {
+            @RequestBody EntradaRequest request,
+            Authentication authentication) {
 
-        return registroService.registrarEntrada(request);
+        return registroService
+                .registrarEntrada(
+                        request,
+                        authentication
+                );
     }
 
-    @PutMapping("/salida/{usuarioId}")
-    public RegistroResponse registrarSalida(
-            @PathVariable Long usuarioId) {
+    @PostMapping("/salida")
+    public void registrarSalida(
+            Authentication authentication) {
 
-        return registroService.registrarSalida(usuarioId);
+        registroService
+                .registrarSalida(
+                        authentication
+                );
     }
 
 }
