@@ -11,6 +11,7 @@ import vdg.marcha.puertollano.model.Usuario;
 import vdg.marcha.puertollano.repository.RegistroRepository;
 import vdg.marcha.puertollano.repository.UsuarioRepository;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,7 +25,7 @@ public class RegistroService {
 
     private final UsuarioRepository usuarioRepository;
 
-
+    private Instant fechaHoraEntrada;
 
     public RegistroActivoResponse obtenerRegistroActivo(
             Authentication authentication) {
@@ -81,7 +82,7 @@ public class RegistroService {
         registro.setUsuario(usuario);
 
         registro.setFechaHoraEntrada(
-                LocalDateTime.now()
+                Instant.now()
         );
 
         registro.setKilometros(
@@ -112,7 +113,7 @@ public class RegistroService {
                         .orElseThrow();
 
         registro.setFechaHoraSalida(
-                LocalDateTime.now()
+                Instant.now()
         );
 
         registroRepository.save(registro);

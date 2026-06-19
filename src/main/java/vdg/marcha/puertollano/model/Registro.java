@@ -3,6 +3,7 @@ package vdg.marcha.puertollano.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,9 +27,9 @@ public class Registro {
     private Usuario usuario;
 
     @Column(nullable = false)
-    private LocalDateTime fechaHoraEntrada;
+    private Instant fechaHoraEntrada;
 
-    private LocalDateTime fechaHoraSalida;
+    private Instant fechaHoraSalida;
 
     @Column(nullable = false)
     private Double kilometros;
