@@ -49,4 +49,12 @@ public class RegistroController {
                 );
     }
 
+    @GetMapping("/historial")
+    public List<RegistroResponse> obtenerHistorial(Authentication authentication) {
+
+         List<RegistroResponse> lista = registroService.obtenerHistorial(authentication);
+        return lista;
+
+    }
+
 }

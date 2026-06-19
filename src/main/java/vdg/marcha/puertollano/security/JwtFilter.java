@@ -6,10 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vdg.marcha.puertollano.model.Usuario;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -67,5 +69,16 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(
                 request,
                 response);
+    }
+
+    private Usuario obtenerUsuarioAutenticado() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        return (Usuario)
+                authentication.getPrincipal();
     }
 }

@@ -143,6 +143,22 @@ public class RegistroService {
 
                 .build();
     }
+
+    public List<RegistroResponse> obtenerHistorial(Authentication authentication) {
+        String dni =
+                authentication.getName();
+        Usuario usuario =
+                usuarioRepository
+                        .findByDni(dni)
+                        .orElseThrow();
+
+        return registroRepository
+                .findByUsuarioOrderByFechaHoraEntradaDesc(usuario)
+                .stream()
+                .map(this::convertirAResponse)
+                .toList();
+
+    }
 }
 
 
