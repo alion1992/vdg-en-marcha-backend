@@ -9,7 +9,7 @@ public class RegistroResponse {
 
     private Long id;
 
-    private String dni;
+    private String usuario;
 
     private String nombre;
 

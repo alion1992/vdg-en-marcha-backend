@@ -10,7 +10,7 @@ import lombok.Data;
 public class RegistroRequest {
 
     @NotBlank
-    private String dni;
+    private String usuario;
 
     @NotBlank
     private String nombre;

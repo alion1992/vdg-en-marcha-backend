@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginRequest {
 
-    private String dni;
+    private String usuario;
 
     private String password;
 }

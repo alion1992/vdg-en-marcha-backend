@@ -28,8 +28,8 @@ public class UsuarioService {
 
     public UsuarioResponse registrar(RegistroRequest request) {
 
-        if (usuarioRepository.findByDni(request.getDni()).isPresent()) {
-            throw new RuntimeException("Ya existe un usuario con ese DNI");
+        if (usuarioRepository.findByDni(request.getUsuario()).isPresent()) {
+            throw new RuntimeException("Este usuario ya tiene una cuenta activa");
         }
 
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -38,10 +38,10 @@ public class UsuarioService {
 
         UsuarioAutorizado autorizado =
                 usuarioAutorizadoRepository
-                        .findByDni(request.getDni())
+                        .findByDni(request.getUsuario())
                         .orElseThrow(() ->
                                 new RuntimeException(
-                                        "DNI no autorizado"));
+                                        "Usuario no autorizado"));
 
         if (autorizado.getTieneCuenta() || autorizado.getActiva()) {
             throw new RuntimeException(
@@ -49,7 +49,7 @@ public class UsuarioService {
         }
 
         Usuario usuario = Usuario.builder()
-                .dni(request.getDni())
+                .dni(request.getUsuario())
                 .nombre(request.getNombre())
                 .apellidos(request.getApellidos())
                 .email(request.getEmail())
@@ -58,10 +58,13 @@ public class UsuarioService {
                 .build();
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        //Actualizamos la tabla de autorizados para indicar que ya tiene cuenta
+        autorizado.setTieneCuenta(true);
+        usuarioAutorizadoRepository.save(autorizado);
 
         return UsuarioResponse.builder()
                 .id(usuarioGuardado.getId())
-                .dni(usuarioGuardado.getDni())
+                .usuario(usuarioGuardado.getDni())
                 .nombre(usuarioGuardado.getNombre())
                 .apellidos(usuarioGuardado.getApellidos())
                 .email(usuarioGuardado.getEmail())
@@ -72,24 +75,24 @@ public class UsuarioService {
     public LoginResponse login(LoginRequest request) {
 
         Usuario usuario = usuarioRepository
-                .findByDni(request.getDni())
+                .findByDni(request.getUsuario())
                 .orElseThrow(() ->
-                        new RuntimeException("DNI o contraseña incorrectos"));
+                        new RuntimeException("Usuario o contraseña incorrectos"));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 usuario.getPassword())) {
 
             throw new RuntimeException(
-                    "DNI o contraseña incorrectos");
+                    "Usuario o contraseña incorrectos");
         }
 
         UsuarioAutorizado autorizado =
                 usuarioAutorizadoRepository
-                        .findByDni(request.getDni())
+                        .findByDni(request.getUsuario())
                         .orElseThrow(() ->
                                 new RuntimeException(
-                                        "DNI no autorizado"));
+                                        "Usuario no autorizado"));
 
         if (!autorizado.getActiva()) {
             throw new RuntimeException(
@@ -99,7 +102,7 @@ public class UsuarioService {
 
         return LoginResponse.builder()
                 .id(usuario.getId())
-                .dni(usuario.getDni())
+                .usuario(usuario.getDni())
                 .nombre(usuario.getNombre())
                 .token(jwtService.generateToken(
                         usuario.getDni()))
