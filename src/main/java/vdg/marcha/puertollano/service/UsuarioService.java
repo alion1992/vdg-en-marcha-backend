@@ -43,7 +43,7 @@ public class UsuarioService {
                                 new RuntimeException(
                                         "Usuario no autorizado"));
 
-        if (autorizado.getTieneCuenta() || autorizado.getActiva()) {
+        if (autorizado.getTieneCuenta()) {
             throw new RuntimeException(
                     "Este usuario ya tiene una cuenta vinculada");
         }
